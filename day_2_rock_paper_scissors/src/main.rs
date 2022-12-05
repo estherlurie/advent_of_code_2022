@@ -1,10 +1,8 @@
-use std::fs::File;
-use std::io::{self, BufRead};
+use lines::get_lines;
 
 const INPUT_FILE: &str = "inputs/day_2.txt";
 fn main() {
-    let input = File::open(INPUT_FILE).unwrap();
-    let lines = io::BufReader::new(input).lines();
+    let lines = get_lines(INPUT_FILE);
 
     let total = lines.flatten().fold(0, |score, line| {
         let (me, opponent) = parse_line(line);

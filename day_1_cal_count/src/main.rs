@@ -1,7 +1,6 @@
+use lines::get_lines;
 use std::cmp::Reverse;
 use std::collections::BinaryHeap;
-use std::fs::File;
-use std::io::{self, BufRead};
 
 const INPUT_FILE: &str = "inputs/day_1.txt";
 const TOP_K_ELVES: usize = 3;
@@ -13,8 +12,7 @@ pub struct Calories {
 }
 
 fn main() {
-    let input = File::open(INPUT_FILE).unwrap();
-    let lines = io::BufReader::new(input).lines();
+    let lines = get_lines(INPUT_FILE);
 
     let cals = lines.flatten().fold(
         Calories {
