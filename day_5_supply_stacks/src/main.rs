@@ -1,19 +1,13 @@
 use lines::get_lines;
+use std::fs::File;
+use std::io::{BufReader, Lines};
 
 const INPUT_FILE: &str = "inputs/day_5.txt";
 
 fn main() {
     let mut lines = get_lines(INPUT_FILE);
-    let mut crates = String::new();
-    loop {
-        let line = lines.next().unwrap().unwrap();
-        if line.is_empty() {
-            break;
-        }
-        crates.push_str(&format!("{}\n", line));
-    }
+    let crates = get_diagram(&mut lines);
     let mut cargo_bay = CargoBay::new(crates);
-
     lines.flatten().for_each(|line| {
         cargo_bay.move_cargo(MoveInstruction::new(line));
     });
@@ -24,6 +18,18 @@ fn main() {
     );
 }
 
+fn get_diagram(lines: &mut Lines<BufReader<File>>) -> String {
+    let mut crates = String::new();
+    loop {
+        let line = lines.next().unwrap().unwrap();
+        if line.is_empty() {
+            break;
+        }
+        crates.push_str(&format!("{}\n", line));
+    }
+    crates
+}
+
 #[derive(Debug)]
 struct MoveInstruction {
     from: usize,
@@ -32,14 +38,11 @@ struct MoveInstruction {
 }
 impl MoveInstruction {
     pub fn new(line: String) -> MoveInstruction {
-        // "move X from Y to Z"
+        // "move <amount> from <from> to <to>"
         let mut split = line.split(' ');
-        split.next();
-        let amount = split.next().unwrap().parse::<usize>().unwrap();
-        split.next();
-        let from = split.next().unwrap().parse::<usize>().unwrap() - 1;
-        split.next();
-        let to = split.next().unwrap().parse::<usize>().unwrap() - 1;
+        let amount = split.nth(1).unwrap().parse::<usize>().unwrap();
+        let from = split.nth(1).unwrap().parse::<usize>().unwrap() - 1;
+        let to = split.nth(1).unwrap().parse::<usize>().unwrap() - 1;
 
         MoveInstruction { from, to, amount }
     }
@@ -58,6 +61,9 @@ impl CargoBay {
 
         diagram.lines().for_each(|line| {
             let mut store = false;
+            // each bay is represented by "[A] ", except the final one
+            // so, when we have idx % 4 == 0, we know the next char
+            // is what we want to store
             line.chars().enumerate().for_each(|(idx, c)| {
                 if idx % 4 == 0 {
                     store = true;
