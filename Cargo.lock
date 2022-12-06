@@ -38,5 +38,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "day_6_tuning_trouble"
+version = "0.1.0"
+dependencies = [
+ "lines",
+]
+
+[[package]]
 name = "lines"
 version = "0.1.0"
